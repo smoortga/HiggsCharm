@@ -28,7 +28,7 @@ import itertools
 #
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-tag = "Initial_Test"
+tag = "Higgs_Effective_Couplings_Test"
 
 
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -38,9 +38,12 @@ tag = "Initial_Test"
 # this should match the name of a directory in "addons/models/"
 # that contains the model UFO.
 #
+# Models used so far:    SMEFTsim_A_general_MwScheme_UFO_v2,
+#                        Higgs_Effective_Couplings_UFO
+#
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-model_name = "SMEFTsim_A_general_MwScheme_UFO_v2" # aanpassen 
+model_name = "Higgs_Effective_Couplings_UFO" # aanpassen 
 
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 #
@@ -63,9 +66,9 @@ model_name = "SMEFTsim_A_general_MwScheme_UFO_v2" # aanpassen
 
 # p p > h c toevoegen
 processes = [
-	"generate p p > h j"
-	# "generate p p > h c",
-	# "add process p p > h c~"
+	#"generate p p > h j"
+        "generate p p > h c",
+	"add process p p > h c~"
 	#,"generate p p > t t~ / a z h w+ DIM6=1 , (t > w+ b DIM6=0, w+ > l+ vl DIM6=0), (t~ > w- b~ DIM6=0, w- > l- vl~ DIM6=0)"
 	#,"add process p p > t t~ j / a z h w+ DIM6=1 , (t > w+ b DIM6=0, w+ > l+ vl DIM6=0), (t~ > w- b~ DIM6=0, w- > l- vl~ DIM6=0)"
 ]
@@ -127,7 +130,17 @@ assert len(baseline_values) == len(operators), \
 # No restriction: empty string ""
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-restriction = "SMlimit"
+restriction = ""
+
+#*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+#
+#               PT AND ETA
+# (to be changed through customizecard)
+# Don't change anything: empty string ""
+#*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+minimum_jet_pt = "20.0" # Minimum pt of j, b, a, l. (GeV)
+maximum_jet_eta = "2.4" # Maximum absolute eta of j, b, a, l.
 
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 #

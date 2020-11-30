@@ -1,5 +1,4 @@
 from process_cfg import *
-
 """
 python prepare_process.py
 """
@@ -69,6 +68,12 @@ if flavour_scheme == "5F" or flavour_scheme == "5f":
 	customizecards_.write("set run_card maxjetflavor 5 \n") 
 else:
 	customizecards_.write("set run_card maxjetflavor 4 \n")
+if minimum_jet_pt:
+        for param in ["ptj","ptb","pta","ptl"]:
+                customizecards_.write("set run_card " + param + " " + minimum_jet_pt + " \n")
+if maximum_jet_eta:
+        for param in ["etaj", "etab", "etaa", "etal"]:
+                customizecards_.write("set run_card " + param + " " + maximum_jet_eta + " \n")
 customizecards_.close()
 
 print("--> wrote to %s/customizecards.dat"%working_dir)
@@ -219,7 +224,7 @@ reweight_card_.write("#*********************************************************
 reweight_card_.write("#                       Reweight Module                           * \n")
 reweight_card_.write("#****************************************************************** \n")
 reweight_card_.write(" \n")
-reweight_card_.write(" change rwgt_dir rwgt \n")
+reweight_card_.write("change rwgt_dir rwgt \n")
 reweight_card_.write(" \n")
 for w_name,w_dict in reweight_dict.iteritems():
 	reweight_card_.write("launch --rwgt_name=%s \n"%w_name)
