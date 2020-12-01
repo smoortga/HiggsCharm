@@ -28,7 +28,7 @@ import itertools
 #
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-tag = "Higgs_Effective_Couplings_Test"
+tag = "Initial_Test"
 
 
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -43,7 +43,7 @@ tag = "Higgs_Effective_Couplings_Test"
 #
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-model_name = "Higgs_Effective_Couplings_UFO" # aanpassen 
+model_name = "SMEFTsim_A_general_MwScheme_UFO_v2" # aanpassen 
 
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 #
