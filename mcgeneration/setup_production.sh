@@ -3,7 +3,7 @@
 
 ### define pathes - please keep structure and names to properly apply patches 
 EFTMCPATH=`pwd -P`
-GENPRODPATH=${EFTMCPATH}/../genproductions_HiggsEft                                                                                                                                                                      
+GENPRODPATH=${EFTMCPATH}/../genproductions                                                                                                                                                                      
 
 
 ### check out official genproduction repo, currently branch 2.6 

@@ -62,6 +62,9 @@ customizecards_ = open(working_dir+"/customizecards.dat","w")
 customizecards_.write("set param_card mass 6 172.5 \n")
 customizecards_.write("set param_card yukawa 6 172.5 \n")
 customizecards_.write("set param_card decay 6 auto \n")
+customizecards_.write("set param_card mass 4 1.28 \n")
+customizecards_.write("set param_card yukawa 4 1.28 \n")
+
 for idx,op in enumerate(operators):
 	customizecards_.write("set param_card %s %s \n"%(op,baseline_values[idx]))
 if flavour_scheme == "5F" or flavour_scheme == "5f":

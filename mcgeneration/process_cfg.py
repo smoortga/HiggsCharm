@@ -28,7 +28,7 @@ import itertools
 #
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-tag = "Initial_Test"
+tag = "Higgs_Effective_Couplings_Test"
 
 
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -43,7 +43,7 @@ tag = "Initial_Test"
 #
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-model_name = "SMEFTsim_A_general_MwScheme_UFO_v2" # aanpassen 
+model_name = "Higgs_Effective_Couplings_UFO" # aanpassen 
 
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 #
@@ -67,8 +67,8 @@ model_name = "SMEFTsim_A_general_MwScheme_UFO_v2" # aanpassen
 # p p > h c toevoegen
 processes = [
 	#"generate p p > h j"
-        "generate p p > h c",
-	"add process p p > h c~"
+        "generate p p > h c HIG=1",
+	"add process p p > h c~ HIG=1"
 	#,"generate p p > t t~ / a z h w+ DIM6=1 , (t > w+ b DIM6=0, w+ > l+ vl DIM6=0), (t~ > w- b~ DIM6=0, w- > l- vl~ DIM6=0)"
 	#,"add process p p > t t~ j / a z h w+ DIM6=1 , (t > w+ b DIM6=0, w+ > l+ vl DIM6=0), (t~ > w- b~ DIM6=0, w- > l- vl~ DIM6=0)"
 ]
