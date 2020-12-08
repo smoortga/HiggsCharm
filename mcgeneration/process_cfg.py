@@ -67,8 +67,8 @@ model_name = "Higgs_Effective_Couplings_UFO" # aanpassen
 # p p > h c toevoegen
 processes = [
 	#"generate p p > h j"
-        "generate p p > h c HIG=1",
-	"add process p p > h c~ HIG=1"
+        "generate p p > h c HIG=1, (h > z mu+ mu-, z > mu+ mu-)",
+	"add process p p > h c~ HIG=1, (h > z mu+ mu-, z > mu+ mu-)"
 	#,"generate p p > t t~ / a z h w+ DIM6=1 , (t > w+ b DIM6=0, w+ > l+ vl DIM6=0), (t~ > w- b~ DIM6=0, w- > l- vl~ DIM6=0)"
 	#,"add process p p > t t~ j / a z h w+ DIM6=1 , (t > w+ b DIM6=0, w+ > l+ vl DIM6=0), (t~ > w- b~ DIM6=0, w- > l- vl~ DIM6=0)"
 ]
@@ -140,7 +140,8 @@ restriction = ""
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 minimum_jet_pt = "20.0" # Minimum pt of j, b, a, l. (GeV)
-maximum_jet_eta = "2.4" # Maximum absolute eta of j, b, a, l.
+maximum_jet_eta = "3.0" # Maximum absolute eta of j, b, a, l.
+# DeltaR op 0.4 zetten (allemaal op hetzelfde zetten)
 
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 #

@@ -37,7 +37,8 @@ if not(args.jobflavour in ["espresso","microcentury","longlunch","workday","tomo
 	sys.exit(1)
 
 os.system("voms-proxy-init --voms cms --valid 192:0")
-os.system("cp $X509_USER_PROXY /user/$USER/")	
+os.system("export X509_USER_PROXY=$(voms-proxy-info -path)")    
+os.system("cp $X509_USER_PROXY /user/$USER/")
 
 # Create directory to store the log files
 if not os.path.isdir(os.getcwd()+"/condor_log_"+(args.tag).replace(" ","_")): os.mkdir(os.getcwd()+"/condor_log_"+(args.tag).replace(" ","_"))
@@ -53,6 +54,7 @@ if not os.path.isdir(os.path.abspath(args.outdir)):
 		elif answer == "y": 
 			#os.system("gfal-mkdir srm://maite.iihe.ac.be:8443%s"%(args.outdir))
                         os.system("mkdir %s"%(args.outdir))
+                        #print(os.path.abspath(args.outdir))
 			if not os.path.isdir(os.path.abspath(args.outdir)):
 				print("creating directory failed (do you have proper acces rights?)")
 				print("Exiting...")
