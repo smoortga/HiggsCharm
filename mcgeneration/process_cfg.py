@@ -141,7 +141,7 @@ restriction = ""
 
 minimum_jet_pt = "20.0" # Minimum pt of j, b, a, l. (GeV)
 maximum_jet_eta = "3.0" # Maximum absolute eta of j, b, a, l.
-# DeltaR op 0.4 zetten (allemaal op hetzelfde zetten)
+delta_R = "0.5" # DeltaR op 0.4 zetten (allemaal op hetzelfde zetten)
 
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 #

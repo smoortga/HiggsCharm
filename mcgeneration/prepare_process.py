@@ -77,6 +77,10 @@ if minimum_jet_pt:
 if maximum_jet_eta:
         for param in ["etaj", "etab", "etaa", "etal"]:
                 customizecards_.write("set run_card " + param + " " + maximum_jet_eta + " \n")
+if delta_R:
+        for param in ["drjj","drbb","drll","draa","drbj","draj","drjl","drab","drbl","dral"]:
+                customizecards_.write("set run_card " + param + " " + delta_R + " \n")
+
 customizecards_.close()
 
 print("--> wrote to %s/customizecards.dat"%working_dir)
