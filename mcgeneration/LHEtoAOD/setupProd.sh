@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# source setupProd.sh slc7_amd64_gcc700 CMSSW_10_6_19 testFullChain
+# source setupProd.sh slc7_amd64_gcc700 CMSSW_10_6_19 HcToFourMuons
 
 if [ -n "$1" ]
   then
@@ -31,6 +31,7 @@ echo "creating grid proxy..."
 voms-proxy-init --voms cms -valid 192:00
 
 echo "setting up CMSSW environment..."
+export SCRAM_ARCH=$scram_arch
 mkdir "prod_${tag}"
 cd "prod_${tag}"
 cmsrel $cmssw_version
