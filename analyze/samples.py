@@ -18,11 +18,13 @@ sample_dict = {
 						"private":True, # If private production, put to True. If central production, put to False
 						"files":[], # sub dictionary to save files with start and end event
 						"nevents":-1,
+						"xsec":0.000005864815,
 		},
 	"GluGluToHiggs0MToZZTo4mu":{	"path":"/GluGluToHiggs0MToZZTo4mu_M125_GaSM_13TeV_MCFM701_pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM",
 									"private":False, # If private production, put to True. If central production, put to False
 									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
 									"nevents":-1,
+									"xsec":0.3069,
 		},
 }
 
