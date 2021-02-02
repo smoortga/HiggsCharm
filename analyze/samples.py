@@ -20,12 +20,55 @@ sample_dict = {
 						"nevents":-1,
 						"xsec":0.000005864815,
 		},
+	# https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D/GluGluToHiggs0MToZZTo4mu_M125_GaSM_13TeV_MCFM701_pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM
 	"GluGluToHiggs0MToZZTo4mu":{	"path":"/GluGluToHiggs0MToZZTo4mu_M125_GaSM_13TeV_MCFM701_pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM",
 									"private":False, # If private production, put to True. If central production, put to False
 									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
 									"nevents":-1,
 									"xsec":0.3069,
 		},
+# 	# https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D/GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM
+# 	"GluGluToContinToZZTo4mu":{	"path":"/GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM",
+# 									"private":False, # If private production, put to True. If central production, put to False
+# 									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+# 									"nevents":-1, #992547
+# 									"xsec":0.3069,
+# 		},
+# 	# https://cmsweb.cern.ch/das/request?input=dataset%3D%2FTTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8%2FRunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1%2FNANOAODSIM&instance=prod/global
+# 	"TTZToLLNuNu":{	"path":"/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM",
+# 									"private":False, # If private production, put to True. If central production, put to False
+# 									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+# 									"nevents":-1, #13914900
+# 									"xsec":0.2432,
+# 		},
+# 	# https://cmsweb.cern.ch/das/request?input=dataset%3D%2FZZ_TuneCP5_13TeV-pythia8%2FRunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1%2FNANOAODSIM&instance=prod/global
+# 	"ZZ":{	"path":"/ZZ_TuneCP5_13TeV-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM",
+# 									"private":False, # If private production, put to True. If central production, put to False
+# 									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+# 									"nevents":-1, # 2000000 
+# 									"xsec":12.14,
+# 		},
+# 	#https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D%2FWW_TuneCP5_13TeV-pythia8%2FRunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1%2FNANOAODSIM	
+# 	"WW":{	"path":"/WW_TuneCP5_13TeV-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM",
+# 									"private":False, # If private production, put to True. If central production, put to False
+# 									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+# 									"nevents":-1, # 7959200 
+# 									"xsec":75.8,
+# 		},
+# 	# https://cmsweb.cern.ch/das/request?input=dataset%3D%2FWZ_TuneCP5_13TeV-pythia8%2FRunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1%2FNANOAODSIM&instance=prod/global
+# 	"WZ":{	"path":"/WZ_TuneCP5_13TeV-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM",
+# 									"private":False, # If private production, put to True. If central production, put to False
+# 									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+# 									"nevents":-1, # 4000000 
+# 									"xsec":27.6,
+# 		},
+# 	# https://cmsweb.cern.ch/das/request?input=dataset%3D%2FWZZ_TuneCP5_13TeV-amcatnlo-pythia8%2FRunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1%2FNANOAODSIM&instance=prod/global
+# 	"WZZ":{	"path":"/WZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM",
+# 									"private":False, # If private production, put to True. If central production, put to False
+# 									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+# 									"nevents":-1, # 250000
+# 									"xsec":0.05565,
+# 		},
 }
 
 
