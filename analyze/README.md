@@ -26,7 +26,7 @@ python samples.py
 ```
 
 ### Step 2: Define you analysis selection
-You can define you selections in [Analyze_nanoAOD.py](Analyze_nanoAOD.py). You can add variables to the `dict_variableName_Leaves`, and fill them in the loop. The content of the variables in the nanoAOD files can be found [via this link](https://cms-nanoaod-integration.web.cern.ch/integration/master-106X/mc106X_doc.html). You could do a small local test of thi script using for example (change path names to your needs!):
+You can define you selections in [Analyze_nanoAOD.py](Analyze_nanoAOD.py). You can add variables to the `dict_variableName_Leaves`, and fill them in the loop. The content of the variables in the nanoAOD files can be found [via this link](https://cms-nanoaod-integration.web.cern.ch/integration/master-106X/mc106X_doc.html). You could do a small local test of this script using for example (change path names to your needs!):
 ```
 python Analyze_nanoAOD.py \
 --sampletag=HcTo4mu \
