@@ -95,36 +95,40 @@ os.system("voms-proxy-init --voms cms --valid 192:0")
 for sample, properties in sample_dict.iteritems():
 	print "Start processing sample with tag: "+sample
 	
-	if properties["private"] == True:
-		files = os.listdir(properties["path"])
-		counter = 0
-		for f_idx,f in enumerate(files):
-			print "--> processing " + properties["path"]+f
-			#f_name = f.split(".root")[0]
-			properties["files"].append([properties["path"]+f,counter])
-			f_ = ROOT.TFile(properties["path"]+f)
-			t_ = f_.Get("Events")
-			nen_ = int(t_.GetEntries())
-			properties["files"][f_idx].append(counter+nen_-1)
-			counter += nen_
-		properties["nevents"] = counter
-			
+        if properties["private"] == True:
+                files = os.listdir(properties["path"])
+                counter = 0
+                for f_idx,f in enumerate(files):
+                        print "--> processing " + properties["path"]+f
+                        #f_name = f.split(".root")[0]
+                        f_ = ROOT.TFile(properties["path"]+f)
+                        if (not f_): 
+                                print "encountered NULL pointer, skipping this file"
+                                continue
+                        properties["files"].append([properties["path"]+f,counter])
+                        t_ = f_.Get("Events")
+                        nen_ = int(t_.GetEntries())
+                        properties["files"][f_idx].append(counter+nen_-1)
+                        counter += nen_
+                properties["nevents"] = counter
 			
 	else:
 		files = (os.popen('dasgoclient -query="file dataset=%s"'%properties["path"]).read()).split("\n")[:-1]
-		files_xrootd = ["root://cms-xrd-global.cern.ch//"+f_ for f_ in files]
-		counter = 0
-		for f_idx,f  in enumerate(files_xrootd):
-			print "--> processing " + f
-			#f_name = f.split(".root")[0]
-			properties["files"].append([f,counter])
-			f_ = ROOT.TFile.Open(f)
-			t_ = f_.Get("Events")
-			nen_ = int(t_.GetEntries())
-			properties["files"][f_idx].append(counter+nen_-1)
-			counter += nen_
-		properties["nevents"] = counter
-	
+                files_xrootd = ["root://cms-xrd-global.cern.ch//"+f_ for f_ in files]
+                counter = 0
+                for f_idx,f  in enumerate(files_xrootd):
+                        print "--> processing " + f
+                        #f_name = f.split(".root")[0]
+                        f_ = ROOT.TFile.Open(f)
+                        if (not f_): 
+                                print "encountered NULL pointer, skipping this file"
+                                continue
+                        properties["files"].append([f,counter])
+                        t_ = f_.Get("Events")
+                        nen_ = int(t_.GetEntries())
+                        properties["files"][f_idx].append(counter+nen_-1)
+                        counter += nen_
+                properties["nevents"] = counter
 	print "Done processing sample with tag: "+sample
 	print ""
 		
