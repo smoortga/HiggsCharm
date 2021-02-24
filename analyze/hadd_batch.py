@@ -56,7 +56,7 @@ for sample,files in unique_files.iteritems():
 	print sample
 	if not os.path.isdir(localdir+"/"+sample): os.mkdir(localdir+"/"+sample)
 
-	ff_ = open(localdir+"/"+sample+"/launch.sh", 'w')
+        ff_ = open(localdir+"/"+sample+"/launch.sh", 'w')
 	ff_.write("#!/bin/bash \n")
 	ff_.write("pwd=$PWD \n")  
 	ff_.write("source $VO_CMS_SW_DIR/cmsset_default.sh \n")                                                                                                                                                           
@@ -78,7 +78,7 @@ for sample,files in unique_files.iteritems():
 	for fff in files:
 		ff_.write("rm %s/%s \n"%(indir,fff))
 	ff_.close()
-
+        os.system("chmod 777 %s"%(localdir+"/"+sample+"/launch.sh"))
 	jobs_file.write("%s/%s \n"%(localdir,sample))
 
 jobs_file.close()

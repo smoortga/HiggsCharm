@@ -104,7 +104,7 @@ def main():
 		# CREATE DIRECTORY FOR JOB SUMISSION OF THIS SAMPLE
 		#
 		sampledir = workingdir+"/"+tmpdirname+"/"+sample_tag
-		if not os.path.isdir(sampledir): os.mkdir(sampledir)
+                if not os.path.isdir(sampledir): os.mkdir(sampledir)
 		
 		#
 		# TOTAL NUMBER OF EVENTS TO PROCESS
@@ -147,6 +147,7 @@ def main():
 			flaunch_.write("cp $TMPDIR/%s %s/%s \n"%(outfilename,args.outdir,outfilename))
 			flaunch_.write("rm $TMPDIR/%s \n"%(outfilename))
 			flaunch_.close()
+                        os.system("chmod +rwx %s"%(jobdir+"/launch.sh"))
 			
 			jobs_file.write("%s \n"%(jobdir))
 			

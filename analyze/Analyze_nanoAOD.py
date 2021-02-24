@@ -1,3 +1,4 @@
+
 from argparse import ArgumentParser
 import sys
 import os
@@ -181,12 +182,17 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
 	"""
 	match_index_to_weight = {}
 	match_index_to_weight.update({0:"weight_kc2"})
-	match_index_to_weight.update({1:"weight_kc0"})
+	match_index_to_weight.update({1:"weight_kcm10"})
 	match_index_to_weight.update({2:"weight_kc5"})
 	match_index_to_weight.update({3:"weight_kc10"})
-	match_index_to_weight.update({4:"weight_kc1"})
-	match_index_to_weight.update({5:"weight_kc0p5"})
-	for idx,weight_name in match_index_to_weight.iteritems():
+	match_index_to_weight.update({4:"weight_SM"})
+	match_index_to_weight.update({5:"weight_kcm0p5"})
+	match_index_to_weight.update({6:"weight_kc0p5"})
+        match_index_to_weight.update({7:"weight_kc0"})
+        match_index_to_weight.update({8:"weight_kcm2"})
+        match_index_to_weight.update({9:"weight_kcm1"})
+        match_index_to_weight.update({10:"weight_kcm5"})
+        for idx,weight_name in match_index_to_weight.iteritems():
 		dict_variableName_Leaves.update({weight_name: [array('d', [0]),"D"]})
 	
 	
@@ -195,7 +201,25 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
 	dict_variableName_Leaves.update({"LeadingJet_Pt": [array('d', [0]),"D"]}) # Transverse momentum of the hardest jet
 	
 	#LEPTONS
-	
+	dict_variableName_Leaves.update({"nSelectedMuons": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon1_pt": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon2_pt": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon3_pt": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon4_pt": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon1_eta": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon2_eta": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon3_eta": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon4_eta": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon_deltaR_12": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon_deltaR_13": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon_deltaR_14": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon_deltaR_23": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon_deltaR_24": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"Muon_deltaR_34": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"MuonPair_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"MuonPair_InvMass": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"MuonsInvariantMass": [array('d', [0]), "D"]})
+        
 	# ********************************************************************************
 	
 	
@@ -249,9 +273,88 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
 		dict_variableName_Leaves["nSelectedJets"][0][0] = len(selected_jet_idx)
 		dict_variableName_Leaves["LeadingJet_Pt"][0][0] = max(selected_jet_pt)
 			
-		
-		
-		
+		######################
+                #
+                # muon selections
+                #
+                ######################
+		selected_muon_idx = []
+                selected_muon_pt = []
+                selected_muon_eta = []
+                # Loop over de muonen:
+                for m_idx in range(intree_.nMuon):
+                        # selecteer enkel muonen met pT>25 |eta|<2.4 :
+                        if intree_.Muon_pt[m_idx] > 10 and abs(intree_.Muon_eta[m_idx]) < 2.4:
+                                selected_muon_idx.append(m_idx)
+                                selected_muon_pt.append(intree_.Muon_pt[m_idx])
+        
+                #  vraag minstens 4 muonen die hieraan voldoen:
+                if len(selected_muon_idx) < 4: continue
+                dict_variableName_Leaves["nSelectedMuons"][0][0] = len(selected_muon_idx)
+                
+                # Sorts from highest pt to lowest
+                muon_info_combined = zip(selected_muon_pt, selected_muon_idx)
+                muon_info_combined = sorted(muon_info_combined, reverse=True)
+                # Sort idx array according to pt (from highest to lowest)
+                selected_muon_idx = [y for x,y in muon_info_combined]
+                
+                if intree_.Muon_pt[selected_muon_idx[0]] < 20:
+                        continue
+                if intree_.Muon_pt[selected_muon_idx[1]] < 15:
+                        continue
+                if intree_.Muon_pt[selected_muon_idx[2]] < 15:
+                        continue
+                if intree_.Muon_pt[selected_muon_idx[3]] < 10:
+                        continue
+                
+                dict_variableName_Leaves["Muon1_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[0]]
+                dict_variableName_Leaves["Muon2_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[1]]
+                dict_variableName_Leaves["Muon3_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[2]]
+                dict_variableName_Leaves["Muon4_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[3]] 
+
+                dict_variableName_Leaves["Muon1_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[0]]
+                dict_variableName_Leaves["Muon2_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[1]]
+                dict_variableName_Leaves["Muon3_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[2]]
+                dict_variableName_Leaves["Muon4_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[3]]
+                
+                FourVector_Muon1 = ROOT.TLorentzVector()
+                FourVector_Muon2 = ROOT.TLorentzVector()
+                FourVector_Muon3 = ROOT.TLorentzVector()
+                FourVector_Muon4 = ROOT.TLorentzVector()
+
+                FourVector_Muon1.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[0]], intree_.Muon_eta[selected_muon_idx[0]], intree_.Muon_phi[selected_muon_idx[0]], intree_.Muon_mass[selected_muon_idx[0]])
+                FourVector_Muon2.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[1]], intree_.Muon_eta[selected_muon_idx[1]], intree_.Muon_phi[selected_muon_idx[1]], intree_.Muon_mass[selected_muon_idx[1]])
+                FourVector_Muon3.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[2]], intree_.Muon_eta[selected_muon_idx[2]], intree_.Muon_phi[selected_muon_idx[2]], intree_.Muon_mass[selected_muon_idx[2]])
+                FourVector_Muon4.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[3]], intree_.Muon_eta[selected_muon_idx[3]], intree_.Muon_phi[selected_muon_idx[3]], intree_.Muon_mass[selected_muon_idx[3]])
+                
+                FourVector_Sum = FourVector_Muon1 + FourVector_Muon2 + FourVector_Muon3 + FourVector_Muon4
+
+                InvariantMass = FourVector_Sum.M()
+                
+                dict_variableName_Leaves["MuonsInvariantMass"][0][0] = InvariantMass
+
+                dict_variableName_Leaves["Muon_deltaR_12"][0][0] = FourVector_Muon1.DeltaR(FourVector_Muon2)
+                dict_variableName_Leaves["Muon_deltaR_13"][0][0] = FourVector_Muon1.DeltaR(FourVector_Muon3)
+                dict_variableName_Leaves["Muon_deltaR_14"][0][0] = FourVector_Muon1.DeltaR(FourVector_Muon4)
+                dict_variableName_Leaves["Muon_deltaR_23"][0][0] = FourVector_Muon2.DeltaR(FourVector_Muon3)
+                dict_variableName_Leaves["Muon_deltaR_24"][0][0] = FourVector_Muon2.DeltaR(FourVector_Muon4)
+                dict_variableName_Leaves["Muon_deltaR_34"][0][0] = FourVector_Muon3.DeltaR(FourVector_Muon4)
+
+                # Select muon pair with invariant mass closest to the Z-boson mass. Thus the pair for which | M - MZ | is smallest.
+                FourVector_Muons = [FourVector_Muon1, FourVector_Muon2, FourVector_Muon3, FourVector_Muon4]
+                Combinations = [(1,2), (1,3), (1,4), (2,3), (2,4), (3,4)]
+                InvMass = []
+                InvMass_Diffs = []
+                for i, j in Combinations:
+                        V_Sum = FourVector_Muons[i-1] + FourVector_Muons[j-1]
+                        InvMass_Dif = abs(V_Sum.M() - 91.18)
+                        InvMass_Diffs.append(InvMass_Dif)
+                        InvMass.append(V_Sum.M())
+                # Pair closest to Z boson mass:
+                SelectedPair = Combinations[InvMass_Diffs.index(min(InvMass_Diffs))]
+                dict_variableName_Leaves["MuonPair_deltaR"][0][0] = FourVector_Muons[SelectedPair[0]-1].DeltaR(FourVector_Muons[SelectedPair[1]-1])
+                dict_variableName_Leaves["MuonPair_InvMass"][0][0] = InvMass[Combinations.index(SelectedPair)]
+                
 		######################
 		#
 		# MadGraph Reweighting weights
