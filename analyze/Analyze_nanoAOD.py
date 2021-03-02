@@ -219,6 +219,8 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
         dict_variableName_Leaves.update({"MuonPair_deltaR": [array('d', [0]), "D"]})
         dict_variableName_Leaves.update({"MuonPair_InvMass": [array('d', [0]), "D"]})
         dict_variableName_Leaves.update({"MuonsInvariantMass": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsL": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB": [array('d', [0]), "D"]})
         
 	# ********************************************************************************
 	
@@ -272,7 +274,8 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
 		if len(selected_jet_idx) < 1: continue
 		dict_variableName_Leaves["nSelectedJets"][0][0] = len(selected_jet_idx)
 		dict_variableName_Leaves["LeadingJet_Pt"][0][0] = max(selected_jet_pt)
-			
+                leading_jetpt_idx = selected_jet_idx[selected_jet_pt.index(max(selected_jet_pt))]
+
 		######################
                 #
                 # muon selections
@@ -300,11 +303,7 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
                 
                 if intree_.Muon_pt[selected_muon_idx[0]] < 20:
                         continue
-                if intree_.Muon_pt[selected_muon_idx[1]] < 15:
-                        continue
-                if intree_.Muon_pt[selected_muon_idx[2]] < 15:
-                        continue
-                if intree_.Muon_pt[selected_muon_idx[3]] < 10:
+                if intree_.Muon_pt[selected_muon_idx[1]] < 10:
                         continue
                 
                 dict_variableName_Leaves["Muon1_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[0]]
@@ -330,6 +329,8 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
                 FourVector_Sum = FourVector_Muon1 + FourVector_Muon2 + FourVector_Muon3 + FourVector_Muon4
 
                 InvariantMass = FourVector_Sum.M()
+
+                if (InvariantMass < 100) or (InvariantMass > 150): continue
                 
                 dict_variableName_Leaves["MuonsInvariantMass"][0][0] = InvariantMass
 
@@ -341,6 +342,7 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
                 dict_variableName_Leaves["Muon_deltaR_34"][0][0] = FourVector_Muon3.DeltaR(FourVector_Muon4)
 
                 # Select muon pair with invariant mass closest to the Z-boson mass. Thus the pair for which | M - MZ | is smallest.
+                # Also check whether the pair has opposite charge.
                 FourVector_Muons = [FourVector_Muon1, FourVector_Muon2, FourVector_Muon3, FourVector_Muon4]
                 Combinations = [(1,2), (1,3), (1,4), (2,3), (2,4), (3,4)]
                 InvMass = []
@@ -350,10 +352,46 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
                         InvMass_Dif = abs(V_Sum.M() - 91.18)
                         InvMass_Diffs.append(InvMass_Dif)
                         InvMass.append(V_Sum.M())
-                # Pair closest to Z boson mass:
-                SelectedPair = Combinations[InvMass_Diffs.index(min(InvMass_Diffs))]
+                # Pair closest to Z boson mass: sort Combinations according to InvMass_Diff
+                TempSortingArray = zip(InvMass_Diffs, Combinations)
+                TempSortingArray = sorted(TempSortingArray)
+                CombSorted = [comb for m, comb in TempSortingArray]
+                SelectedPair = CombSorted[0]
+                # Check whether the selected pair has opposite charge:
+                pair_idx = 1
+                pair_found = True
+                while intree_.Muon_charge[selected_muon_idx[SelectedPair[0]-1]] != -intree_.Muon_charge[selected_muon_idx[SelectedPair[1]-1]]:
+                        if pair_idx > 5:
+                                pair_found = False
+                                break
+                        SelectedPair = CombSorted[pair_idx]
+                        pair_idx += 1
+
+                if not pair_found: continue
+
+                # Invariant Mass Cut:
+                MuonPair_InvMass = InvMass[Combinations.index(SelectedPair)]
+                if (MuonPair_InvMass < 70) or (MuonPair_InvMass > 110): continue
+                
+                # Find other Z candidate:
+                OtherPair = ()
+                for pair in Combinations:
+                        if (pair[0] not in SelectedPair) and (pair[1] not in SelectedPair):
+                                OtherPair = pair
+                
+                OtherPair_InvMass = InvMass[Combinations.index(OtherPair)]
+                if (OtherPair_InvMass < 50) and (OtherPair_InvMass > 130): continue
+                
+                # Check if other Z candidate has opposite sign muons:
+                if intree_.Muon_charge[selected_muon_idx[OtherPair[0]-1]] != -intree_.Muon_charge[selected_muon_idx[OtherPair[1]-1]]: continue
+                
                 dict_variableName_Leaves["MuonPair_deltaR"][0][0] = FourVector_Muons[SelectedPair[0]-1].DeltaR(FourVector_Muons[SelectedPair[1]-1])
-                dict_variableName_Leaves["MuonPair_InvMass"][0][0] = InvMass[Combinations.index(SelectedPair)]
+                dict_variableName_Leaves["MuonPair_InvMass"][0][0] = MuonPair_InvMass
+
+                CvsL = float(intree_.Jet_btagDeepFlavC[leading_jetpt_idx])/(1. -float(intree_.Jet_btagDeepFlavB[leading_jetpt_idx]))
+                CvsB = float(intree_.Jet_btagDeepFlavC[leading_jetpt_idx])/(float(intree_.Jet_btagDeepFlavC[leading_jetpt_idx]) + float(intree_.Jet_btagDeepFlavB[leading_jetpt_idx]))
+                dict_variableName_Leaves["CvsL"][0][0] = CvsL
+                dict_variableName_Leaves["CvsB"][0][0] = CvsB
                 
 		######################
 		#

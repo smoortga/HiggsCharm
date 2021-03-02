@@ -21,25 +21,25 @@ sample_dict = {
 						"xsec":0.000005864815,
 		},
 	# https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D/GluGluToHiggs0MToZZTo4mu_M125_GaSM_13TeV_MCFM701_pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM
-	"GluGluToHiggs0MToZZTo4L":{	"path":"/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8_ext3-v1/NANOAODSIM",
-									"private":False, # If private production, put to True. If central production, put to False
-									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+	"GluGluToHiggs0MToZZTo4L":{	"path":"/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8_ext1-v1/NANOAODSIM",
+									"private":False, 
+									"files":[], 
 									"nevents":-1,
-									"xsec":28.87,
+									"xsec":0.0127,
 		},
 	# https://cmsweb.cern.ch/das/request?view=list&limit=50&instance=prod%2Fglobal&input=dataset%3D/GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM
-	"GluGluToContinToZZTo4mu":{	"path":"/GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM",
+	"GluGluToContinToZZTo4mu":{	"path":"/GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM",
 									"private":False, # If private production, put to True. If central production, put to False
 									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
 									"nevents":-1, #992547
-									"xsec":1.402,
+									"xsec":0.00158,
 		},
 	# url:
         "QQToZZTo4L":{	"path":"/ZZTo4L_13TeV_powheg_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM",
 									"private":False, # If private production, put to True. If central production, put to False
 									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
 									"nevents":-1, #992547
-									"xsec":1.325,
+									"xsec":0.01325,
 		},
 
 	# url:
@@ -49,7 +49,42 @@ sample_dict = {
 									"nevents":-1, #992547
 									"xsec":6435,
 		},
-
+        # url:
+        "VBF_HToZZTo4L":{	"path":"/VBF_HToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8_ext1-v1/NANOAODSIM",
+									"private":False, # If private production, put to True. If central production, put to False
+									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+									"nevents":-1, #992547
+									"xsec":0.000986,
+		}, 
+        # url:
+        "ttH_HToZZTo4L":{	"path":"/ttH_HToZZ_4LFilter_M125_13TeV_powheg2_JHUGenV7011_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM",
+									"private":False, # If private production, put to True. If central production, put to False
+									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+									"nevents":-1, #992547
+									"xsec":0.000393,
+		},
+        # url:
+        "ZH_HToZZTo4L":{	"path":"/ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUGenV7011_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM",
+									"private":False, # If private production, put to True. If central production, put to False
+									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+									"nevents":-1, #992547
+									"xsec":0.000668,
+		},
+        # url:
+        "WplusH_HToZZTo4L":{	"path":"/WplusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM",
+									"private":False, # If private production, put to True. If central production, put to False
+									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+									"nevents":-1, #992547
+									"xsec":0.0002176,
+		},
+        # url:
+        "WminH_HToZZTo4L":{	"path":"/WminusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM",
+									"private":False, # If private production, put to True. If central production, put to False
+									"files":[], # sub dictionary to save files with start and end event {name:[begin,end]}
+									"nevents":-1, #992547
+									"xsec":0.0001380,
+		},
+        
 # 	# https://cmsweb.cern.ch/das/request?input=dataset%3D%2FTTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8%2FRunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1%2FNANOAODSIM&instance=prod/global
 # 	"TTZToLLNuNu":{	"path":"/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM",
 # 									"private":False, # If private production, put to True. If central production, put to False
@@ -116,17 +151,19 @@ for sample, properties in sample_dict.iteritems():
 		files = (os.popen('dasgoclient -query="file dataset=%s"'%properties["path"]).read()).split("\n")[:-1]
                 files_xrootd = ["root://cms-xrd-global.cern.ch//"+f_ for f_ in files]
                 counter = 0
+                files_skipped = 0
                 for f_idx,f  in enumerate(files_xrootd):
                         print "--> processing " + f
                         #f_name = f.split(".root")[0]
                         f_ = ROOT.TFile.Open(f)
                         if (not f_): 
                                 print "encountered NULL pointer, skipping this file"
+                                files_skipped += 1
                                 continue
                         properties["files"].append([f,counter])
                         t_ = f_.Get("Events")
                         nen_ = int(t_.GetEntries())
-                        properties["files"][f_idx].append(counter+nen_-1)
+                        properties["files"][f_idx-files_skipped].append(counter+nen_-1)
                         counter += nen_
                 properties["nevents"] = counter
 	print "Done processing sample with tag: "+sample
