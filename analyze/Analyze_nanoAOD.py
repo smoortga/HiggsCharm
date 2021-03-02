@@ -219,8 +219,12 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
         dict_variableName_Leaves.update({"MuonPair_deltaR": [array('d', [0]), "D"]})
         dict_variableName_Leaves.update({"MuonPair_InvMass": [array('d', [0]), "D"]})
         dict_variableName_Leaves.update({"MuonsInvariantMass": [array('d', [0]), "D"]})
-        dict_variableName_Leaves.update({"CvsL": [array('d', [0]), "D"]})
-        dict_variableName_Leaves.update({"CvsB": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsL_Jet1": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_Jet1": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsL_Jet2": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_Jet2": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsL_Jet3": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_Jet3": [array('d', [0]), "D"]})
         
 	# ********************************************************************************
 	
@@ -274,7 +278,22 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
 		if len(selected_jet_idx) < 1: continue
 		dict_variableName_Leaves["nSelectedJets"][0][0] = len(selected_jet_idx)
 		dict_variableName_Leaves["LeadingJet_Pt"][0][0] = max(selected_jet_pt)
-                leading_jetpt_idx = selected_jet_idx[selected_jet_pt.index(max(selected_jet_pt))]
+
+                # Sort selected_jet_idx according to selected_jet_pt:
+                JetInfoCombined = zip(selected_jet_pt, selected_jet_idx)
+                JetInfoCombined = sorted(JetInfoCombined)
+                selected_jet_idx = [idx for pt, idx in JetInfoCombined]
+                jetpt1_idx = selected_jet_idx[0]
+                if len(selected_jet_idx) > 2:
+                        jetpt2_idx = selected_jet_idx[1]
+                        jetpt3_idx = selected_jet_idx[2]
+                if len(selected_jet_idx) > 1:
+                        jetpt2_idx = selected_jet_idx[1]
+                        jetpt3_idx = -1
+                if len(selected_jet_idx) == 1:
+                        jetpt2_idx = -1
+                        jetpt3_idx = -1
+                jetpt_idx_list = [jetpt1_idx, jetpt2_idx, jetpt3_idx]
 
 		######################
                 #
@@ -387,11 +406,24 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
                 
                 dict_variableName_Leaves["MuonPair_deltaR"][0][0] = FourVector_Muons[SelectedPair[0]-1].DeltaR(FourVector_Muons[SelectedPair[1]-1])
                 dict_variableName_Leaves["MuonPair_InvMass"][0][0] = MuonPair_InvMass
+                CvsL_list = []
+                CvsB_list = []
+                for idx in jetpt_idx_list:
+                        if idx == -1:
+                                CvsL_list.append(-1)
+                                CvsB_list.append(-1)
+                        else:
+                                CvsL = float(intree_.Jet_btagDeepFlavC[idx])/(1. -float(intree_.Jet_btagDeepFlavB[idx]))
+                                CvsB = float(intree_.Jet_btagDeepFlavC[idx])/(float(intree_.Jet_btagDeepFlavC[idx]) + float(intree_.Jet_btagDeepFlavB[idx]))
+                                CvsL_list.append(CvsL)
+                                CvsB_list.append(CvsB)
 
-                CvsL = float(intree_.Jet_btagDeepFlavC[leading_jetpt_idx])/(1. -float(intree_.Jet_btagDeepFlavB[leading_jetpt_idx]))
-                CvsB = float(intree_.Jet_btagDeepFlavC[leading_jetpt_idx])/(float(intree_.Jet_btagDeepFlavC[leading_jetpt_idx]) + float(intree_.Jet_btagDeepFlavB[leading_jetpt_idx]))
-                dict_variableName_Leaves["CvsL"][0][0] = CvsL
-                dict_variableName_Leaves["CvsB"][0][0] = CvsB
+                dict_variableName_Leaves["CvsL_Jet1"][0][0] = CvsL_list[0]
+                dict_variableName_Leaves["CvsB_Jet1"][0][0] = CvsB_list[0]
+                dict_variableName_Leaves["CvsL_Jet2"][0][0] = CvsL_list[1]
+                dict_variableName_Leaves["CvsB_Jet2"][0][0] = CvsB_list[1]
+                dict_variableName_Leaves["CvsL_Jet3"][0][0] = CvsL_list[2]
+                dict_variableName_Leaves["CvsB_Jet3"][0][0] = CvsB_list[2]
                 
 		######################
 		#
