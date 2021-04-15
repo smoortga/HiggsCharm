@@ -53,6 +53,34 @@ python Analyze_nanoAOD.py \
 
 """
 
+def JetSortedProperties(pt_array, eta_array, CvL_array, CvB_array, sorting_var):
+        InfoCombined = zip(pt_array, eta_array, CvL_array, CvB_array)
+        if sorting_var == "pt":
+                sorting_idx = 0
+        elif sorting_var == "CvL":
+                sorting_idx = 2
+        elif sorting_var == "CvB":
+                sorting_idx = 3
+
+        InfoCombined = sorted(InfoCombined, key = lambda x: x[sorting_idx], reverse=True)
+        filler = (-1, -1, -1, -1)
+        if len(InfoCombined) == 1:
+                InfoCombined += [filler, filler]
+        if len(InfoCombined) == 2:
+                InfoCombined += [filler]
+
+        return InfoCombined
+
+def FourVectorFromIdx(idx, tree):
+        Pt = tree.Muon_pt[idx]
+        Phi = tree.Muon_phi[idx]
+        Eta = tree.Muon_eta[idx]
+        Mass = tree.Muon_mass[idx]
+        FourVector = ROOT.TLorentzVector()
+        FourVector.SetPtEtaPhiM(Pt, Eta, Phi, Mass)
+        return FourVector
+
+
 def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd = -1, Splitted = False):
 	
 	######################
@@ -198,9 +226,53 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
 	
 	# JETS
 	dict_variableName_Leaves.update({"nSelectedJets": [array('d', [0]),"D"]}) # number of jets passing the event selections criteria
-	dict_variableName_Leaves.update({"LeadingJet_Pt": [array('d', [0]),"D"]}) # Transverse momentum of the hardest jet
 	
-	#LEPTONS
+        dict_variableName_Leaves.update({"LeadingPtJet_Pt": [array('d', [0]),"D"]}) 
+	dict_variableName_Leaves.update({"LeadingPtJet_Eta": [array('d', [0]),"D"]})
+        
+        dict_variableName_Leaves.update({"LeadingCvLJet_Pt": [array('d', [0]),"D"]}) 
+	dict_variableName_Leaves.update({"LeadingCvLJet_Eta": [array('d', [0]),"D"]})
+
+        dict_variableName_Leaves.update({"LeadingCvBJet_Pt": [array('d', [0]),"D"]}) 
+	dict_variableName_Leaves.update({"LeadingCvBJet_Eta": [array('d', [0]),"D"]})
+
+	dict_variableName_Leaves.update({"CvsL_LeadingPtJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_LeadingPtJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsL_SubleadingPtJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_SubleadingPtJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsL_SubsubleadingPtJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_SubsubleadingPtJet": [array('d', [0]), "D"]})
+
+        dict_variableName_Leaves.update({"CvsL_LeadingCvLJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_LeadingCvLJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsL_SubleadingCvLJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_SubleadingCvLJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsL_SubsubleadingCvLJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_SubsubleadingCvLJet": [array('d', [0]), "D"]})
+
+        dict_variableName_Leaves.update({"CvsL_LeadingCvBJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_LeadingCvBJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsL_SubleadingCvBJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_SubleadingCvBJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsL_SubsubleadingCvBJet": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"CvsB_SubsubleadingCvBJet": [array('d', [0]), "D"]})
+
+        dict_variableName_Leaves.update({"SubleadingPtJet_Pt": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"SubsubleadingPtJet_Pt": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"SubleadingPtJet_Eta": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"SubsubleadingPtJet_Eta": [array('d', [0]), "D"]})
+        
+        dict_variableName_Leaves.update({"SubleadingCvLJet_Pt": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"SubsubleadingCvLJet_Pt": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"SubleadingCvLJet_Eta": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"SubsubleadingCvLJet_Eta": [array('d', [0]), "D"]})
+
+        dict_variableName_Leaves.update({"SubleadingCvBJet_Pt": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"SubsubleadingCvBJet_Pt": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"SubleadingCvBJet_Eta": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"SubsubleadingCvBJet_Eta": [array('d', [0]), "D"]})
+
+        #LEPTONS
 	dict_variableName_Leaves.update({"nSelectedMuons": [array('d', [0]), "D"]})
         dict_variableName_Leaves.update({"Muon1_pt": [array('d', [0]), "D"]})
         dict_variableName_Leaves.update({"Muon2_pt": [array('d', [0]), "D"]})
@@ -216,15 +288,27 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
         dict_variableName_Leaves.update({"Muon_deltaR_23": [array('d', [0]), "D"]})
         dict_variableName_Leaves.update({"Muon_deltaR_24": [array('d', [0]), "D"]})
         dict_variableName_Leaves.update({"Muon_deltaR_34": [array('d', [0]), "D"]})
-        dict_variableName_Leaves.update({"MuonPair_deltaR": [array('d', [0]), "D"]})
-        dict_variableName_Leaves.update({"MuonPair_InvMass": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"MuonPair1_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"MuonPair1_InvMass": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"MuonPair2_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"MuonPair2_InvMass": [array('d', [0]), "D"]})
         dict_variableName_Leaves.update({"MuonsInvariantMass": [array('d', [0]), "D"]})
-        dict_variableName_Leaves.update({"CvsL_Jet1": [array('d', [0]), "D"]})
-        dict_variableName_Leaves.update({"CvsB_Jet1": [array('d', [0]), "D"]})
-        dict_variableName_Leaves.update({"CvsL_Jet2": [array('d', [0]), "D"]})
-        dict_variableName_Leaves.update({"CvsB_Jet2": [array('d', [0]), "D"]})
-        dict_variableName_Leaves.update({"CvsL_Jet3": [array('d', [0]), "D"]})
-        dict_variableName_Leaves.update({"CvsB_Jet3": [array('d', [0]), "D"]})
+
+        dict_variableName_Leaves.update({"LeadingPtJet_Muon1_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"LeadingPtJet_Muon2_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"LeadingPtJet_Muon3_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"LeadingPtJet_Muon4_deltaR": [array('d', [0]), "D"]})
+
+        dict_variableName_Leaves.update({"LeadingCvLJet_Muon1_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"LeadingCvLJet_Muon2_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"LeadingCvLJet_Muon3_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"LeadingCvLJet_Muon4_deltaR": [array('d', [0]), "D"]})
+
+        dict_variableName_Leaves.update({"LeadingCvBJet_Muon1_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"LeadingCvBJet_Muon2_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"LeadingCvBJet_Muon3_deltaR": [array('d', [0]), "D"]})
+        dict_variableName_Leaves.update({"LeadingCvBJet_Muon4_deltaR": [array('d', [0]), "D"]})
+        
         
 	# ********************************************************************************
 	
@@ -270,30 +354,88 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
 		######################
 		selected_jet_idx = []
 		selected_jet_pt = []
+                selected_jet_CvL_tag = []
+                selected_jet_CvB_tag = []
+                selected_jet_eta = []
+
 		for jet_Idx in range (intree_.nJet):
 			if intree_.Jet_pt[jet_Idx] > 20 and abs(intree_.Jet_eta[jet_Idx]) < 2.4 and intree_.Jet_jetId >= 7:
 				selected_jet_idx.append(jet_Idx)
 				selected_jet_pt.append(intree_.Jet_pt[jet_Idx])
+                                selected_jet_CvL_tag.append(float(intree_.Jet_btagDeepFlavC[jet_Idx])/(1. -float(intree_.Jet_btagDeepFlavB[jet_Idx])))
+                                selected_jet_CvB_tag.append(float(intree_.Jet_btagDeepFlavC[jet_Idx])/(float(intree_.Jet_btagDeepFlavC[jet_Idx]) + float(intree_.Jet_btagDeepFlavB[jet_Idx])))
+                                selected_jet_eta.append(intree_.Jet_eta[jet_Idx])
 		
-		if len(selected_jet_idx) < 1: continue
+                if len(selected_jet_idx) < 1: continue
 		dict_variableName_Leaves["nSelectedJets"][0][0] = len(selected_jet_idx)
-		dict_variableName_Leaves["LeadingJet_Pt"][0][0] = max(selected_jet_pt)
 
-                # Sort selected_jet_idx according to selected_jet_pt:
-                JetInfoCombined = zip(selected_jet_pt, selected_jet_idx)
-                JetInfoCombined = sorted(JetInfoCombined)
-                selected_jet_idx = [idx for pt, idx in JetInfoCombined]
-                jetpt1_idx = selected_jet_idx[0]
-                if len(selected_jet_idx) > 2:
-                        jetpt2_idx = selected_jet_idx[1]
-                        jetpt3_idx = selected_jet_idx[2]
-                if len(selected_jet_idx) > 1:
-                        jetpt2_idx = selected_jet_idx[1]
-                        jetpt3_idx = -1
-                if len(selected_jet_idx) == 1:
-                        jetpt2_idx = -1
-                        jetpt3_idx = -1
-                jetpt_idx_list = [jetpt1_idx, jetpt2_idx, jetpt3_idx]
+                JetInfoCombined_PtSort = JetSortedProperties(selected_jet_pt, selected_jet_eta, selected_jet_CvL_tag, selected_jet_CvB_tag, sorting_var="pt")
+                JetInfoCombined_CvLSort = JetSortedProperties(selected_jet_pt, selected_jet_eta, selected_jet_CvL_tag, selected_jet_CvB_tag, sorting_var="CvL")
+                JetInfoCombined_CvBSort = JetSortedProperties(selected_jet_pt, selected_jet_eta, selected_jet_CvL_tag, selected_jet_CvB_tag, sorting_var="CvB")
+
+                dict_variableName_Leaves["LeadingPtJet_Pt"][0][0] = JetInfoCombined_PtSort[0][0]
+                dict_variableName_Leaves["LeadingPtJet_Eta"][0][0] = JetInfoCombined_PtSort[0][1]
+                dict_variableName_Leaves["SubleadingPtJet_Pt"][0][0] = JetInfoCombined_PtSort[0][0]
+                dict_variableName_Leaves["SubleadingPtJet_Eta"][0][0] = JetInfoCombined_PtSort[0][1]
+                dict_variableName_Leaves["SubsubleadingPtJet_Pt"][0][0] = JetInfoCombined_PtSort[0][0]
+                dict_variableName_Leaves["SubsubleadingPtJet_Eta"][0][0] = JetInfoCombined_PtSort[0][1]
+
+                dict_variableName_Leaves["LeadingCvLJet_Pt"][0][0] = JetInfoCombined_CvLSort[0][0]
+                dict_variableName_Leaves["LeadingCvLJet_Eta"][0][0] = JetInfoCombined_CvLSort[0][1]
+                dict_variableName_Leaves["SubleadingCvLJet_Pt"][0][0] = JetInfoCombined_CvLSort[0][0]
+                dict_variableName_Leaves["SubleadingCvLJet_Eta"][0][0] = JetInfoCombined_CvLSort[0][1]
+                dict_variableName_Leaves["SubsubleadingCvLJet_Pt"][0][0] = JetInfoCombined_CvLSort[0][0]
+                dict_variableName_Leaves["SubsubleadingCvLJet_Eta"][0][0] = JetInfoCombined_CvLSort[0][1]
+
+                dict_variableName_Leaves["LeadingCvBJet_Pt"][0][0] = JetInfoCombined_CvBSort[0][0]
+                dict_variableName_Leaves["LeadingCvBJet_Eta"][0][0] = JetInfoCombined_CvBSort[0][1]
+                dict_variableName_Leaves["SubleadingCvBJet_Pt"][0][0] = JetInfoCombined_CvBSort[0][0]
+                dict_variableName_Leaves["SubleadingCvBJet_Eta"][0][0] = JetInfoCombined_CvBSort[0][1]
+                dict_variableName_Leaves["SubsubleadingCvBJet_Pt"][0][0] = JetInfoCombined_CvBSort[0][0]
+                dict_variableName_Leaves["SubsubleadingCvBJet_Eta"][0][0] = JetInfoCombined_CvBSort[0][1]
+                
+                dict_variableName_Leaves["CvsL_LeadingPtJet"][0][0] = JetInfoCombined_PtSort[0][2]
+                dict_variableName_Leaves["CvsB_LeadingPtJet"][0][0] = JetInfoCombined_PtSort[0][3]
+                dict_variableName_Leaves["CvsL_SubleadingPtJet"][0][0] = JetInfoCombined_PtSort[1][2]
+                dict_variableName_Leaves["CvsB_SubleadingPtJet"][0][0] = JetInfoCombined_PtSort[1][3]
+                dict_variableName_Leaves["CvsL_SubsubleadingPtJet"][0][0] = JetInfoCombined_PtSort[2][2]
+                dict_variableName_Leaves["CvsB_SubsubleadingPtJet"][0][0] = JetInfoCombined_PtSort[2][3]
+
+                dict_variableName_Leaves["CvsL_LeadingCvLJet"][0][0] = JetInfoCombined_CvLSort[0][2]
+                dict_variableName_Leaves["CvsB_LeadingCvLJet"][0][0] = JetInfoCombined_CvLSort[0][3]
+                dict_variableName_Leaves["CvsL_SubleadingCvLJet"][0][0] = JetInfoCombined_CvLSort[1][2]
+                dict_variableName_Leaves["CvsB_SubleadingCvLJet"][0][0] = JetInfoCombined_CvLSort[1][3]
+                dict_variableName_Leaves["CvsL_SubsubleadingCvLJet"][0][0] = JetInfoCombined_CvLSort[2][2]
+                dict_variableName_Leaves["CvsB_SubsubleadingCvLJet"][0][0] = JetInfoCombined_CvLSort[2][3]
+
+                dict_variableName_Leaves["CvsL_LeadingCvBJet"][0][0] = JetInfoCombined_CvBSort[0][2]
+                dict_variableName_Leaves["CvsB_LeadingCvBJet"][0][0] = JetInfoCombined_CvBSort[0][3]
+                dict_variableName_Leaves["CvsL_SubleadingCvBJet"][0][0] = JetInfoCombined_CvBSort[1][2]
+                dict_variableName_Leaves["CvsB_SubleadingCvBJet"][0][0] = JetInfoCombined_CvBSort[1][3]
+                dict_variableName_Leaves["CvsL_SubsubleadingCvBJet"][0][0] = JetInfoCombined_CvBSort[2][2]
+                dict_variableName_Leaves["CvsB_SubsubleadingCvBJet"][0][0] = JetInfoCombined_CvBSort[2][3]
+
+                LeadingJet_Pt = JetInfoCombined_PtSort[0][0]
+                LeadingJet_Eta = JetInfoCombined_PtSort[0][1]
+                LeadingJet_Phi = intree_.Jet_phi[selected_jet_idx[selected_jet_pt.index(max(selected_jet_pt))]]
+                LeadingJet_Mass = intree_.Jet_mass[selected_jet_idx[selected_jet_pt.index(max(selected_jet_pt))]]
+                FourVector_LeadingPtJet = ROOT.TLorentzVector()
+                FourVector_LeadingPtJet.SetPtEtaPhiM(LeadingJet_Pt, LeadingJet_Eta, LeadingJet_Phi, LeadingJet_Mass)
+
+                LeadingJet_Pt = JetInfoCombined_CvLSort[0][0]
+                LeadingJet_Eta = JetInfoCombined_CvLSort[0][1]
+                LeadingJet_Phi = intree_.Jet_phi[selected_jet_idx[selected_jet_CvL_tag.index(max(selected_jet_CvL_tag))]]
+                LeadingJet_Mass = intree_.Jet_mass[selected_jet_idx[selected_jet_CvL_tag.index(max(selected_jet_CvL_tag))]]
+                FourVector_LeadingCvLJet = ROOT.TLorentzVector()
+                FourVector_LeadingCvLJet.SetPtEtaPhiM(LeadingJet_Pt, LeadingJet_Eta, LeadingJet_Phi, LeadingJet_Mass)
+
+                LeadingJet_Pt = JetInfoCombined_CvBSort[0][0]
+                LeadingJet_Eta = JetInfoCombined_CvBSort[0][1]
+                LeadingJet_Phi = intree_.Jet_phi[selected_jet_idx[selected_jet_CvB_tag.index(max(selected_jet_CvB_tag))]]
+                LeadingJet_Mass = intree_.Jet_mass[selected_jet_idx[selected_jet_CvB_tag.index(max(selected_jet_CvB_tag))]]
+                FourVector_LeadingCvBJet = ROOT.TLorentzVector()
+                FourVector_LeadingCvBJet.SetPtEtaPhiM(LeadingJet_Pt, LeadingJet_Eta, LeadingJet_Phi, LeadingJet_Mass)
+
 
 		######################
                 #
@@ -301,130 +443,283 @@ def Analyze_nanoAOD(sampletag,outfile,sampledict, private, IdxBegin = 0, IdxEnd 
                 #
                 ######################
 		selected_muon_idx = []
-                selected_muon_pt = []
-                selected_muon_eta = []
+
                 # Loop over de muonen:
                 for m_idx in range(intree_.nMuon):
                         # selecteer enkel muonen met pT>25 |eta|<2.4 :
                         if intree_.Muon_pt[m_idx] > 10 and abs(intree_.Muon_eta[m_idx]) < 2.4:
                                 selected_muon_idx.append(m_idx)
-                                selected_muon_pt.append(intree_.Muon_pt[m_idx])
         
                 #  vraag minstens 4 muonen die hieraan voldoen:
                 if len(selected_muon_idx) < 4: continue
                 dict_variableName_Leaves["nSelectedMuons"][0][0] = len(selected_muon_idx)
                 
-                # Sorts from highest pt to lowest
-                muon_info_combined = zip(selected_muon_pt, selected_muon_idx)
-                muon_info_combined = sorted(muon_info_combined, reverse=True)
-                # Sort idx array according to pt (from highest to lowest)
-                selected_muon_idx = [y for x,y in muon_info_combined]
-                
-                if intree_.Muon_pt[selected_muon_idx[0]] < 20:
+                # Check whether reconstructed muons are "Loose":
+                muons_are_tight = True
+                for idx in selected_muon_idx:
+                        if not intree_.Muon_tightId[idx]:
+                                muons_are_tight = False
+
+                if not muons_are_tight:
                         continue
-                if intree_.Muon_pt[selected_muon_idx[1]] < 10:
-                        continue
-                
-                dict_variableName_Leaves["Muon1_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[0]]
-                dict_variableName_Leaves["Muon2_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[1]]
-                dict_variableName_Leaves["Muon3_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[2]]
-                dict_variableName_Leaves["Muon4_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[3]] 
-
-                dict_variableName_Leaves["Muon1_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[0]]
-                dict_variableName_Leaves["Muon2_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[1]]
-                dict_variableName_Leaves["Muon3_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[2]]
-                dict_variableName_Leaves["Muon4_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[3]]
-                
-                FourVector_Muon1 = ROOT.TLorentzVector()
-                FourVector_Muon2 = ROOT.TLorentzVector()
-                FourVector_Muon3 = ROOT.TLorentzVector()
-                FourVector_Muon4 = ROOT.TLorentzVector()
-
-                FourVector_Muon1.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[0]], intree_.Muon_eta[selected_muon_idx[0]], intree_.Muon_phi[selected_muon_idx[0]], intree_.Muon_mass[selected_muon_idx[0]])
-                FourVector_Muon2.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[1]], intree_.Muon_eta[selected_muon_idx[1]], intree_.Muon_phi[selected_muon_idx[1]], intree_.Muon_mass[selected_muon_idx[1]])
-                FourVector_Muon3.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[2]], intree_.Muon_eta[selected_muon_idx[2]], intree_.Muon_phi[selected_muon_idx[2]], intree_.Muon_mass[selected_muon_idx[2]])
-                FourVector_Muon4.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[3]], intree_.Muon_eta[selected_muon_idx[3]], intree_.Muon_phi[selected_muon_idx[3]], intree_.Muon_mass[selected_muon_idx[3]])
-                
-                FourVector_Sum = FourVector_Muon1 + FourVector_Muon2 + FourVector_Muon3 + FourVector_Muon4
-
-                InvariantMass = FourVector_Sum.M()
-
-                if (InvariantMass < 100) or (InvariantMass > 150): continue
-                
-                dict_variableName_Leaves["MuonsInvariantMass"][0][0] = InvariantMass
-
-                dict_variableName_Leaves["Muon_deltaR_12"][0][0] = FourVector_Muon1.DeltaR(FourVector_Muon2)
-                dict_variableName_Leaves["Muon_deltaR_13"][0][0] = FourVector_Muon1.DeltaR(FourVector_Muon3)
-                dict_variableName_Leaves["Muon_deltaR_14"][0][0] = FourVector_Muon1.DeltaR(FourVector_Muon4)
-                dict_variableName_Leaves["Muon_deltaR_23"][0][0] = FourVector_Muon2.DeltaR(FourVector_Muon3)
-                dict_variableName_Leaves["Muon_deltaR_24"][0][0] = FourVector_Muon2.DeltaR(FourVector_Muon4)
-                dict_variableName_Leaves["Muon_deltaR_34"][0][0] = FourVector_Muon3.DeltaR(FourVector_Muon4)
-
-                # Select muon pair with invariant mass closest to the Z-boson mass. Thus the pair for which | M - MZ | is smallest.
-                # Also check whether the pair has opposite charge.
-                FourVector_Muons = [FourVector_Muon1, FourVector_Muon2, FourVector_Muon3, FourVector_Muon4]
-                Combinations = [(1,2), (1,3), (1,4), (2,3), (2,4), (3,4)]
-                InvMass = []
-                InvMass_Diffs = []
-                for i, j in Combinations:
-                        V_Sum = FourVector_Muons[i-1] + FourVector_Muons[j-1]
-                        InvMass_Dif = abs(V_Sum.M() - 91.18)
-                        InvMass_Diffs.append(InvMass_Dif)
-                        InvMass.append(V_Sum.M())
-                # Pair closest to Z boson mass: sort Combinations according to InvMass_Diff
-                TempSortingArray = zip(InvMass_Diffs, Combinations)
-                TempSortingArray = sorted(TempSortingArray)
-                CombSorted = [comb for m, comb in TempSortingArray]
-                SelectedPair = CombSorted[0]
-                # Check whether the selected pair has opposite charge:
-                pair_idx = 1
-                pair_found = True
-                while intree_.Muon_charge[selected_muon_idx[SelectedPair[0]-1]] != -intree_.Muon_charge[selected_muon_idx[SelectedPair[1]-1]]:
-                        if pair_idx > 5:
-                                pair_found = False
-                                break
-                        SelectedPair = CombSorted[pair_idx]
-                        pair_idx += 1
-
-                if not pair_found: continue
-
-                # Invariant Mass Cut:
-                MuonPair_InvMass = InvMass[Combinations.index(SelectedPair)]
-                if (MuonPair_InvMass < 70) or (MuonPair_InvMass > 110): continue
-                
-                # Find other Z candidate:
-                OtherPair = ()
-                for pair in Combinations:
-                        if (pair[0] not in SelectedPair) and (pair[1] not in SelectedPair):
-                                OtherPair = pair
-                
-                OtherPair_InvMass = InvMass[Combinations.index(OtherPair)]
-                if (OtherPair_InvMass < 50) and (OtherPair_InvMass > 130): continue
-                
-                # Check if other Z candidate has opposite sign muons:
-                if intree_.Muon_charge[selected_muon_idx[OtherPair[0]-1]] != -intree_.Muon_charge[selected_muon_idx[OtherPair[1]-1]]: continue
-                
-                dict_variableName_Leaves["MuonPair_deltaR"][0][0] = FourVector_Muons[SelectedPair[0]-1].DeltaR(FourVector_Muons[SelectedPair[1]-1])
-                dict_variableName_Leaves["MuonPair_InvMass"][0][0] = MuonPair_InvMass
-                CvsL_list = []
-                CvsB_list = []
-                for idx in jetpt_idx_list:
-                        if idx == -1:
-                                CvsL_list.append(-1)
-                                CvsB_list.append(-1)
+                                
+                neg_muon_idx = []
+                pos_muon_idx = []
+                for m_idx in selected_muon_idx:
+                        if intree_.Muon_charge[m_idx] > 0:
+                                pos_muon_idx.append(m_idx)
                         else:
-                                CvsL = float(intree_.Jet_btagDeepFlavC[idx])/(1. -float(intree_.Jet_btagDeepFlavB[idx]))
-                                CvsB = float(intree_.Jet_btagDeepFlavC[idx])/(float(intree_.Jet_btagDeepFlavC[idx]) + float(intree_.Jet_btagDeepFlavB[idx]))
-                                CvsL_list.append(CvsL)
-                                CvsB_list.append(CvsB)
+                                neg_muon_idx.append(m_idx)
 
-                dict_variableName_Leaves["CvsL_Jet1"][0][0] = CvsL_list[0]
-                dict_variableName_Leaves["CvsB_Jet1"][0][0] = CvsB_list[0]
-                dict_variableName_Leaves["CvsL_Jet2"][0][0] = CvsL_list[1]
-                dict_variableName_Leaves["CvsB_Jet2"][0][0] = CvsB_list[1]
-                dict_variableName_Leaves["CvsL_Jet3"][0][0] = CvsL_list[2]
-                dict_variableName_Leaves["CvsB_Jet3"][0][0] = CvsB_list[2]
+                # Construct possible Z candidates:
+                Z_Candidates_InvMass = []
+                Z_Candidates_Idx = []
+                Z_Candidates_Vectors = []
+                for neg_idx in neg_muon_idx:
+                        for pos_idx in pos_muon_idx:
+                                FourVecPos = FourVectorFromIdx(neg_idx, intree_)
+                                FourVecNeg = FourVectorFromIdx(pos_idx, intree_)
+                                FourVecPair = FourVecPos + FourVecNeg
+                                Pair_InvMass = FourVecPair.M()
+
+                                Z_Candidates_InvMass.append(Pair_InvMass)
+                                Z_Candidates_Idx.append((neg_idx, pos_idx))
+                                Z_Candidates_Vectors.append(FourVecPair)
                 
+                ZZ_Candidates_Vectors = []
+                ZZ_Candidates_Idx = []
+                # Construct ZZ Candidates:
+                for idx1, (i,j) in enumerate(Z_Candidates_Idx):
+                        for idx2,(k,l) in enumerate(Z_Candidates_Idx):
+                                if not (i == k or j == l): # Z Candidates don't overlap
+                                        if abs(Z_Candidates_InvMass[idx1] - 91.18) < abs(Z_Candidates_InvMass[idx2] - 91.18):
+                                                SelectedPair = (i,j)
+                                                OtherPair = (k,l)
+                                                ZZ_Candidates_Vectors.append((Z_Candidates_Vectors[idx1], Z_Candidates_Vectors[idx2]))
+                                                ZZ_Candidates_Idx.append([SelectedPair, OtherPair])
+                                        else:
+                                                SelectedPair = (k,l)
+                                                OtherPair = (i,j)
+                                                ZZ_Candidates_Vectors.append((Z_Candidates_Vectors[idx2], Z_Candidates_Vectors[idx1]))
+                                                ZZ_Candidates_Idx.append([SelectedPair, OtherPair])
+
+                # Check total invariant mass:
+                Selected_ZZ_Candidates_Vectors = []
+                Selected_ZZ_Candidates_Idx = []
+                for idx, (FourVec_Pair1, FourVec_Pair2) in enumerate(ZZ_Candidates_Vectors):
+                        FourVecSum = FourVec_Pair1 + FourVec_Pair2
+                        Check1 = False
+                        Check2 = False
+                        Check3 = True
+                        
+                        if 100 < FourVecSum.M() < 150:
+                                Check1 = True
+                        if 70 < FourVec_Pair1.M() < 110:
+                                Check2 = True
+                        if 50 < FourVec_Pair2.M() < 130:
+                                Check3 = True
+                                
+                        Check4 = True
+                        if not (intree_.Muon_pt[ZZ_Candidates_Idx[idx][0][0]] > 20 or intree_.Muon_pt[ZZ_Candidates_Idx[idx][0][1]] > 20):
+                                        Check4 = False
+
+                        if Check1 and Check2 and Check3 and Check4:
+                                Selected_ZZ_Candidates_Vectors.append((FourVec_Pair1, FourVec_Pair2))
+                                Selected_ZZ_Candidates_Idx.append(ZZ_Candidates_Idx[idx])
+                        
+                if not Selected_ZZ_Candidates_Vectors:
+                        continue
+                if len(Selected_ZZ_Candidates_Vectors) > 1:
+                        MassDiffList = []
+                        for FourVec_Pair1, FourVec_Pair2 in Selected_ZZ_Candidates_Vectors:
+                                MassDiffList.append(abs(FourVec_Pair1.M() - 91.18))
+                        min_idx = MassDiffList.index(min(MassDiffList))
+                        FirstZPair_Idx = Selected_ZZ_Candidates_Idx[min_idx][0]
+                        SecondZPair_Idx = Selected_ZZ_Candidates_Idx[min_idx][1]
+                        FirstZPair_Vector = Selected_ZZ_Candidates_Vectors[min_idx][0]
+                        SecondZPair_Vector = Selected_ZZ_Candidates_Vectors[min_idx][1]
+
+                else:
+                        FirstZPair_Idx = Selected_ZZ_Candidates_Idx[0][0]
+                        SecondZPair_Idx = Selected_ZZ_Candidates_Idx[0][1]
+                        FirstZPair_Vector = Selected_ZZ_Candidates_Vectors[0][0] 
+                        SecondZPair_Vector = Selected_ZZ_Candidates_Vectors[0][1]
+
+                if intree_.Muon_pt[FirstZPair_Idx[0]] < intree_.Muon_pt[FirstZPair_Idx[1]]:
+                        FirstZPair_Idx = FirstZPair_Idx[::-1]
+
+                if intree_.Muon_pt[SecondZPair_Idx[0]] < intree_.Muon_pt[SecondZPair_Idx[1]]:
+                        SecondZPair_Idx = SecondZPair_Idx[::-1]
+
+                FourVector_Muon1 = FourVectorFromIdx(FirstZPair_Idx[0], intree_)
+                FourVector_Muon2 = FourVectorFromIdx(FirstZPair_Idx[1], intree_)
+                FourVector_Muon3 = FourVectorFromIdx(SecondZPair_Idx[0], intree_)
+                FourVector_Muon4 = FourVectorFromIdx(SecondZPair_Idx[1], intree_)
+
+                FourVector_Muons = [FourVector_Muon1, FourVector_Muon2, FourVector_Muon3, FourVector_Muon4]
+                FourVector_Total = FourVector_Muon1 + FourVector_Muon2 + FourVector_Muon3 + FourVector_Muon4
+                
+                FirstZPair_InvMass = FirstZPair_Vector.M()
+                SecondZPair_InvMass = SecondZPair_Vector.M()
+                
+                TotalInvariantMass = FourVector_Total.M()
+
+                # # Sorts from highest pt to lowest
+                # muon_info_combined = zip(selected_muon_pt, selected_muon_idx)
+                # muon_info_combined = sorted(muon_info_combined, reverse=True)
+                # # Sort idx array according to pt (from highest to lowest)
+                # selected_muon_idx = [y for x,y in muon_info_combined]
+                
+                # if intree_.Muon_pt[selected_muon_idx[0]] < 20:
+                #         continue
+                # if intree_.Muon_pt[selected_muon_idx[1]] < 10:
+                #         continue
+                
+                
+                
+                # FourVector_Muon1 = ROOT.TLorentzVector()
+                # FourVector_Muon2 = ROOT.TLorentzVector()
+                # FourVector_Muon3 = ROOT.TLorentzVector()
+                # FourVector_Muon4 = ROOT.TLorentzVector()
+
+                # FourVector_Muon1.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[0]], intree_.Muon_eta[selected_muon_idx[0]], intree_.Muon_phi[selected_muon_idx[0]], intree_.Muon_mass[selected_muon_idx[0]])
+                # FourVector_Muon2.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[1]], intree_.Muon_eta[selected_muon_idx[1]], intree_.Muon_phi[selected_muon_idx[1]], intree_.Muon_mass[selected_muon_idx[1]])
+                # FourVector_Muon3.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[2]], intree_.Muon_eta[selected_muon_idx[2]], intree_.Muon_phi[selected_muon_idx[2]], intree_.Muon_mass[selected_muon_idx[2]])
+                # FourVector_Muon4.SetPtEtaPhiM(intree_.Muon_pt[selected_muon_idx[3]], intree_.Muon_eta[selected_muon_idx[3]], intree_.Muon_phi[selected_muon_idx[3]], intree_.Muon_mass[selected_muon_idx[3]])
+                
+                # FourVector_Sum = FourVector_Muon1 + FourVector_Muon2 + FourVector_Muon3 + FourVector_Muon4
+
+                # InvariantMass = FourVector_Sum.M()
+
+                # if (InvariantMass < 100) or (InvariantMass > 150): continue
+                
+                # dict_variableName_Leaves["MuonsInvariantMass"][0][0] = InvariantMass
+
+                # # Select muon pair with invariant mass closest to the Z-boson mass. Thus the pair for which | M - MZ | is smallest.
+                # # Also check whether the pair has opposite charge.
+                # FourVector_Muons = [FourVector_Muon1, FourVector_Muon2, FourVector_Muon3, FourVector_Muon4]
+                # Combinations = [(1,2), (1,3), (1,4), (2,3), (2,4), (3,4)]
+                # InvMass = []
+                # InvMass_Diffs = []
+                # for i, j in Combinations:
+                #         V_Sum = FourVector_Muons[i-1] + FourVector_Muons[j-1]
+                #         InvMass_Dif = abs(V_Sum.M() - 91.18)
+                #         InvMass_Diffs.append(InvMass_Dif)
+                #         InvMass.append(V_Sum.M())
+                # # Pair closest to Z boson mass: sort Combinations according to InvMass_Diff
+                # TempSortingArray = zip(InvMass_Diffs, Combinations)
+                # TempSortingArray = sorted(TempSortingArray)
+                # CombSorted = [comb for m, comb in TempSortingArray]
+                # SelectedPair = CombSorted[0]
+                # # Check whether the selected pair has opposite charge:
+                # pair_idx = 1
+                # pair_found = True
+                # while intree_.Muon_charge[selected_muon_idx[SelectedPair[0]-1]] != -intree_.Muon_charge[selected_muon_idx[SelectedPair[1]-1]]:
+                #         if pair_idx > 5:
+                #                 pair_found = False
+                #                 break
+                #         SelectedPair = CombSorted[pair_idx]
+                #         pair_idx += 1
+
+                # if not pair_found: continue
+
+                # # Invariant Mass Cut:
+                # MuonPair_InvMass = InvMass[Combinations.index(SelectedPair)]
+                # if (MuonPair_InvMass < 70) or (MuonPair_InvMass > 110): continue
+                
+                # # Find other Z candidate:
+                # OtherPair = ()
+                # for pair in Combinations:
+                #         if (pair[0] not in SelectedPair) and (pair[1] not in SelectedPair):
+                #                 OtherPair = pair
+                
+                # OtherPair_InvMass = InvMass[Combinations.index(OtherPair)]
+                # #if (OtherPair_InvMass < 50) or (OtherPair_InvMass > 130): continue
+                
+                # # Check if other Z candidate has opposite sign muons:
+                # if intree_.Muon_charge[selected_muon_idx[OtherPair[0]-1]] != -intree_.Muon_charge[selected_muon_idx[OtherPair[1]-1]]: continue
+                
+                # if intree_.Muon_pt[selected_muon_idx[SelectedPair[0]-1]] <  intree_.Muon_pt[selected_muon_idx[SelectedPair[1]-1]]:
+                #         SelectedPair = SelectedPair[::-1]
+                # if intree_.Muon_pt[selected_muon_idx[OtherPair[0]-1]] <  intree_.Muon_pt[selected_muon_idx[OtherPair[1]-1]]:
+                #         OtherPair = OtherPair[::-1]
+
+                # dict_variableName_Leaves["Muon1_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[SelectedPair[0]-1]]
+                # dict_variableName_Leaves["Muon2_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[SelectedPair[1]-1]]
+                # dict_variableName_Leaves["Muon3_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[OtherPair[0]-1]]
+                # dict_variableName_Leaves["Muon4_pt"][0][0] = intree_.Muon_pt[selected_muon_idx[OtherPair[1]-1]] 
+
+                # dict_variableName_Leaves["Muon1_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[SelectedPair[0]-1]]
+                # dict_variableName_Leaves["Muon2_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[SelectedPair[1]-1]]
+                # dict_variableName_Leaves["Muon3_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[OtherPair[0]-1]]
+                # dict_variableName_Leaves["Muon4_eta"][0][0] = intree_.Muon_eta[selected_muon_idx[OtherPair[1]-1]]
+
+                # dict_variableName_Leaves["MuonPair1_deltaR"][0][0] = FourVector_Muons[SelectedPair[0]-1].DeltaR(FourVector_Muons[SelectedPair[1]-1])
+                # dict_variableName_Leaves["MuonPair2_deltaR"][0][0] = FourVector_Muons[OtherPair[0]-1].DeltaR(FourVector_Muons[OtherPair[1]-1])
+                # dict_variableName_Leaves["MuonPair1_InvMass"][0][0] = MuonPair_InvMass
+                # dict_variableName_Leaves["MuonPair2_InvMass"][0][0] = OtherPair_InvMass
+
+                # dict_variableName_Leaves["Muon_deltaR_12"][0][0] = FourVector_Muons[SelectedPair[0]-1].DeltaR(FourVector_Muons[SelectedPair[1]-1])
+                # dict_variableName_Leaves["Muon_deltaR_13"][0][0] = FourVector_Muons[SelectedPair[0]-1].DeltaR(FourVector_Muons[OtherPair[0]-1])
+                # dict_variableName_Leaves["Muon_deltaR_14"][0][0] = FourVector_Muons[SelectedPair[0]-1].DeltaR(FourVector_Muons[OtherPair[1]-1])
+                # dict_variableName_Leaves["Muon_deltaR_23"][0][0] = FourVector_Muons[SelectedPair[1]-1].DeltaR(FourVector_Muons[OtherPair[0]-1])
+                # dict_variableName_Leaves["Muon_deltaR_24"][0][0] = FourVector_Muons[SelectedPair[1]-1].DeltaR(FourVector_Muons[OtherPair[1]-1])
+                # dict_variableName_Leaves["Muon_deltaR_34"][0][0] = FourVector_Muons[OtherPair[0]-1].DeltaR(FourVector_Muons[OtherPair[1]-1])
+
+                # dict_variableName_Leaves["LeadingPtJet_Muon1_deltaR"][0][0] = FourVector_Muons[SelectedPair[0]-1].DeltaR(FourVector_LeadingPtJet)
+                # dict_variableName_Leaves["LeadingPtJet_Muon2_deltaR"][0][0] = FourVector_Muons[SelectedPair[1]-1].DeltaR(FourVector_LeadingPtJet)
+                # dict_variableName_Leaves["LeadingPtJet_Muon3_deltaR"][0][0] = FourVector_Muons[OtherPair[0]-1].DeltaR(FourVector_LeadingPtJet)
+                # dict_variableName_Leaves["LeadingPtJet_Muon4_deltaR"][0][0] = FourVector_Muons[OtherPair[1]-1].DeltaR(FourVector_LeadingPtJet)
+
+                # dict_variableName_Leaves["LeadingCvLJet_Muon1_deltaR"][0][0] = FourVector_Muons[SelectedPair[0]-1].DeltaR(FourVector_LeadingCvLJet)
+                # dict_variableName_Leaves["LeadingCvLJet_Muon2_deltaR"][0][0] = FourVector_Muons[SelectedPair[1]-1].DeltaR(FourVector_LeadingCvLJet)
+                # dict_variableName_Leaves["LeadingCvLJet_Muon3_deltaR"][0][0] = FourVector_Muons[OtherPair[0]-1].DeltaR(FourVector_LeadingCvLJet)
+                # dict_variableName_Leaves["LeadingCvLJet_Muon4_deltaR"][0][0] = FourVector_Muons[OtherPair[1]-1].DeltaR(FourVector_LeadingCvLJet)
+
+                # dict_variableName_Leaves["LeadingCvBJet_Muon1_deltaR"][0][0] = FourVector_Muons[SelectedPair[0]-1].DeltaR(FourVector_LeadingCvBJet)
+                # dict_variableName_Leaves["LeadingCvBJet_Muon2_deltaR"][0][0] = FourVector_Muons[SelectedPair[1]-1].DeltaR(FourVector_LeadingCvBJet)
+                # dict_variableName_Leaves["LeadingCvBJet_Muon3_deltaR"][0][0] = FourVector_Muons[OtherPair[0]-1].DeltaR(FourVector_LeadingCvBJet)
+                # dict_variableName_Leaves["LeadingCvBJet_Muon4_deltaR"][0][0] = FourVector_Muons[OtherPair[1]-1].DeltaR(FourVector_LeadingCvBJet)
+
+                dict_variableName_Leaves["MuonsInvariantMass"][0][0] = TotalInvariantMass 
+
+                dict_variableName_Leaves["Muon1_pt"][0][0] = intree_.Muon_pt[FirstZPair_Idx[0]]
+                dict_variableName_Leaves["Muon2_pt"][0][0] = intree_.Muon_pt[FirstZPair_Idx[1]]
+                dict_variableName_Leaves["Muon3_pt"][0][0] = intree_.Muon_pt[SecondZPair_Idx[0]]
+                dict_variableName_Leaves["Muon4_pt"][0][0] = intree_.Muon_pt[SecondZPair_Idx[1]] 
+
+                dict_variableName_Leaves["Muon1_eta"][0][0] = intree_.Muon_eta[FirstZPair_Idx[0]]
+                dict_variableName_Leaves["Muon2_eta"][0][0] = intree_.Muon_eta[FirstZPair_Idx[1]]
+                dict_variableName_Leaves["Muon3_eta"][0][0] = intree_.Muon_eta[SecondZPair_Idx[0]]
+                dict_variableName_Leaves["Muon4_eta"][0][0] = intree_.Muon_eta[SecondZPair_Idx[1]]
+
+                dict_variableName_Leaves["MuonPair1_deltaR"][0][0] = FourVector_Muons[0].DeltaR(FourVector_Muons[1])
+                dict_variableName_Leaves["MuonPair2_deltaR"][0][0] = FourVector_Muons[2].DeltaR(FourVector_Muons[3])
+                dict_variableName_Leaves["MuonPair1_InvMass"][0][0] = FirstZPair_InvMass 
+                dict_variableName_Leaves["MuonPair2_InvMass"][0][0] = SecondZPair_InvMass
+
+                dict_variableName_Leaves["Muon_deltaR_12"][0][0] = FourVector_Muons[0].DeltaR(FourVector_Muons[1])
+                dict_variableName_Leaves["Muon_deltaR_13"][0][0] = FourVector_Muons[0].DeltaR(FourVector_Muons[2])
+                dict_variableName_Leaves["Muon_deltaR_14"][0][0] = FourVector_Muons[0].DeltaR(FourVector_Muons[3])
+                dict_variableName_Leaves["Muon_deltaR_23"][0][0] = FourVector_Muons[1].DeltaR(FourVector_Muons[2])
+                dict_variableName_Leaves["Muon_deltaR_24"][0][0] = FourVector_Muons[1].DeltaR(FourVector_Muons[3])
+                dict_variableName_Leaves["Muon_deltaR_34"][0][0] = FourVector_Muons[2].DeltaR(FourVector_Muons[3])
+
+                dict_variableName_Leaves["LeadingPtJet_Muon1_deltaR"][0][0] = FourVector_Muons[0].DeltaR(FourVector_LeadingPtJet)
+                dict_variableName_Leaves["LeadingPtJet_Muon2_deltaR"][0][0] = FourVector_Muons[1].DeltaR(FourVector_LeadingPtJet)
+                dict_variableName_Leaves["LeadingPtJet_Muon3_deltaR"][0][0] = FourVector_Muons[2].DeltaR(FourVector_LeadingPtJet)
+                dict_variableName_Leaves["LeadingPtJet_Muon4_deltaR"][0][0] = FourVector_Muons[3].DeltaR(FourVector_LeadingPtJet)
+
+                dict_variableName_Leaves["LeadingCvLJet_Muon1_deltaR"][0][0] = FourVector_Muons[0].DeltaR(FourVector_LeadingCvLJet)
+                dict_variableName_Leaves["LeadingCvLJet_Muon2_deltaR"][0][0] = FourVector_Muons[1].DeltaR(FourVector_LeadingCvLJet)
+                dict_variableName_Leaves["LeadingCvLJet_Muon3_deltaR"][0][0] = FourVector_Muons[2].DeltaR(FourVector_LeadingCvLJet)
+                dict_variableName_Leaves["LeadingCvLJet_Muon4_deltaR"][0][0] = FourVector_Muons[3].DeltaR(FourVector_LeadingCvLJet)
+
+                dict_variableName_Leaves["LeadingCvBJet_Muon1_deltaR"][0][0] = FourVector_Muons[0].DeltaR(FourVector_LeadingCvBJet)
+                dict_variableName_Leaves["LeadingCvBJet_Muon2_deltaR"][0][0] = FourVector_Muons[1].DeltaR(FourVector_LeadingCvBJet)
+                dict_variableName_Leaves["LeadingCvBJet_Muon3_deltaR"][0][0] = FourVector_Muons[2].DeltaR(FourVector_LeadingCvBJet)
+                dict_variableName_Leaves["LeadingCvBJet_Muon4_deltaR"][0][0] = FourVector_Muons[3].DeltaR(FourVector_LeadingCvBJet)
+
 		######################
 		#
 		# MadGraph Reweighting weights
